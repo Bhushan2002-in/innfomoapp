@@ -93,7 +93,9 @@ export default function FanVerifyPage() {
             {Array.from({ length: 4 }).map((_, idx) => (
               <input
                 key={idx}
-                ref={(el) => (inputsRef.current[idx] = el)}
+                ref={(el) => {
+                  inputsRef.current[idx] = el;
+                }}
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
