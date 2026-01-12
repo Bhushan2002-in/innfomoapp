@@ -306,6 +306,12 @@ const giftOptions = [
   { amount: 5000, perks: ["VIP thank-you video", "Priority shoutout", "Highlight comment", "Send a wish"] },
 ];
 
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 export default function HomePage() {
   return (
     <main className="bg-background-light text-slate-900 dark:bg-background-dark dark:text-white min-h-screen pb-20">
@@ -457,6 +463,10 @@ function PostCard({
   const showControls = items.length > 1;
   const [showGift, setShowGift] = useState(false);
   const [giftAmount, setGiftAmount] = useState(giftOptions[0].amount);
+  const [liked, setLiked] = useState(false);
+  const [showCommentBox, setShowCommentBox] = useState(false);
+  const [comment, setComment] = useState("");
+  const [showShare, setShowShare] = useState(false);
 
   const actionClasses =
     actionVariant === "outline"
@@ -466,22 +476,22 @@ function PostCard({
   return (
     <>
       <article className="group flex flex-col overflow-hidden border-y border-slate-100 bg-white shadow-sm dark:border-white/5 dark:bg-surface-dark sm:mx-4 sm:rounded-3xl sm:border">
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-3">
-          <div
-            className="h-10 w-10 rounded-full bg-cover bg-center"
-            style={{ backgroundImage: `url('${avatar || current.url}')` }}
-          />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">{name}</h3>
-              <VerifiedIcon className={`h-4 w-4 ${verifiedColor}`} />
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="h-10 w-10 rounded-full bg-cover bg-center"
+              style={{ backgroundImage: `url('${avatar || current.url}')` }}
+            />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">{name}</h3>
+                <VerifiedIcon className={`h-4 w-4 ${verifiedColor}`} />
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{time}</p>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">{time}</p>
           </div>
-        </div>
-        <button
-          className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${actionClasses}`}
+          <button
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${actionClasses}`}
         >
           {actionLabel}
         </button>
@@ -492,6 +502,7 @@ function PostCard({
           className="aspect-[4/5] w-full bg-cover bg-center"
           style={{ backgroundImage: `url('${current.url}')` }}
           aria-label={current.alt}
+          onDoubleClick={() => setLiked(true)}
         />
         {current.type === "video" && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/20">
@@ -540,15 +551,27 @@ function PostCard({
 
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
         <div className="flex items-center gap-4">
-          <button className="group flex items-center gap-1.5 text-slate-900 dark:text-white">
-            <HeartIcon className="h-6 w-6 transition-colors group-hover:text-red-500" />
+          <button
+            className="group flex items-center gap-1.5 text-slate-900 dark:text-white"
+            onClick={() => setLiked((prev) => !prev)}
+            type="button"
+          >
+            <HeartIcon className={`h-6 w-6 transition-colors ${liked ? "text-red-500" : "group-hover:text-red-500"}`} />
             <span className="text-sm font-semibold">{likes}</span>
           </button>
-          <button className="group flex items-center gap-1.5 text-slate-900 dark:text-white">
+          <button
+            className="group flex items-center gap-1.5 text-slate-900 dark:text-white"
+            onClick={() => setShowCommentBox(true)}
+            type="button"
+          >
             <ChatIcon className="h-6 w-6 transition-colors group-hover:text-primary" />
             <span className="text-sm font-semibold">{comments}</span>
           </button>
-          <button className="text-slate-900 transition-colors hover:text-primary dark:text-white dark:hover:text-primary">
+          <button
+            className="text-slate-900 transition-colors hover:text-primary dark:text-white dark:hover:text-primary"
+            onClick={() => setShowShare(true)}
+            type="button"
+          >
             <SendIcon className="h-6 w-6 -rotate-12" />
           </button>
         </div>
@@ -578,8 +601,24 @@ function PostCard({
           amount={giftAmount}
           recipientName={name}
           recipientAvatar={avatar || current.url}
-          onClose={() => setShowGift(false)}
+          onClose={() => {
+            setShowGift(false);
+            setLiked(true);
+          }}
           onSelect={(value) => setGiftAmount(value)}
+        />
+      )}
+      {showCommentBox && (
+        <CommentModal comment={comment} onChange={setComment} onClose={() => setShowCommentBox(false)} />
+      )}
+      {showShare && (
+        <ShareModal
+          link={
+            typeof window !== "undefined"
+              ? `${window.location.origin}/post/${slugify(name)}`
+              : `https://innfomo.app/post/${slugify(name)}`
+          }
+          onClose={() => setShowShare(false)}
         />
       )}
     </>
@@ -768,6 +807,113 @@ function GiftModal({
   );
 }
 
+function CommentModal({
+  comment,
+  onChange,
+  onClose,
+}: {
+  comment: string;
+  onChange: (value: string) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 px-4 pb-6 sm:items-center sm:pb-0">
+      <div className="absolute inset-0" onClick={onClose} aria-label="Close comment modal" role="button" tabIndex={-1} />
+      <div className="relative w-full max-w-md rounded-2xl bg-background-light p-5 shadow-2xl ring-1 ring-black/5 dark:bg-background-dark dark:ring-white/5 sm:p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Add a comment</h3>
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
+        </div>
+        <textarea
+          value={comment}
+          onChange={(e) => onChange(e.target.value)}
+          rows={4}
+          className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-surface-dark dark:text-white"
+          placeholder="Write something kind..."
+        />
+        <button className="mt-4 w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary/90 active:scale-[0.98]">
+          Post comment
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ShareModal({ onClose, link }: { onClose: () => void; link: string }) {
+  const platforms = [
+    { name: "Copy link", icon: <CopyIcon className="h-5 w-5" />, action: "copy" },
+    { name: "WhatsApp", icon: <WhatsAppIcon className="h-5 w-5 text-green-500" />, action: "whatsapp" },
+    { name: "Snapchat", icon: <SnapchatIcon className="h-5 w-5 text-yellow-400" />, action: "snapchat" },
+    { name: "Twitter/X", icon: <XIcon className="h-5 w-5" />, action: "x" },
+  ];
+
+  const handleShare = async (action: string) => {
+    if (action === "copy") {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        try {
+          await navigator.clipboard.writeText(link);
+        } catch {
+          // ignore copy errors
+        }
+      }
+    } else if (typeof window !== "undefined") {
+      const encoded = encodeURIComponent(link);
+      const url =
+        action === "whatsapp"
+          ? `https://wa.me/?text=${encoded}`
+          : action === "snapchat"
+            ? `https://snapchat.com/scan?attachmentUrl=${encoded}`
+            : `https://twitter.com/intent/tweet?url=${encoded}`;
+      window.open(url, "_blank", "noreferrer");
+    }
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 px-4 pb-6 sm:items-center sm:pb-0">
+      <div className="absolute inset-0" onClick={onClose} aria-label="Close share modal" role="button" tabIndex={-1} />
+      <div className="relative w-full max-w-md rounded-2xl bg-background-light p-5 shadow-2xl ring-1 ring-black/5 dark:bg-background-dark dark:ring-white/5 sm:p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Share</h3>
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {platforms.map((platform) => (
+            <button
+              key={platform.name}
+              type="button"
+              onClick={() => handleShare(platform.action)}
+              className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-900 transition hover:border-primary/50 hover:text-primary dark:border-slate-700 dark:bg-surface-dark dark:text-white"
+            >
+              {platform.icon}
+              {platform.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500 dark:border-slate-700 dark:bg-surface-dark dark:text-slate-300">
+          {link}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CloseIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true" {...props}>
@@ -793,6 +939,52 @@ function VerifiedIcon(props: SVGProps<SVGSVGElement>) {
         d="M12 4.5 7.5 6.5 5 11.25 7.5 16l4.5 2 4.5-2L19 11.25 16.5 6.5 12 4.5Z"
       />
       <path strokeLinecap="round" strokeLinejoin="round" d="m10.5 11.75 1.75 1.75 3-3.5" />
+    </svg>
+  );
+}
+
+function CopyIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" {...props}>
+      <rect x="9" y="9" width="11" height="11" rx="2" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 15.5h-.5A1.5 1.5 0 0 1 4 14V5.5A1.5 1.5 0 0 1 5.5 4H14a1.5 1.5 0 0 1 1.5 1.5V6" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 4.5a7 7 0 0 0-6.9 8.2l-.6 3.3 3.3-.9A7 7 0 1 0 12 4.5Z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.1 9.2c-.1.4 0 1.2.7 2 1 1.2 2.2 1.8 3.4 2 .6.1 1.2 0 1.4-.2.2-.2.6-.6.7-.9.1-.3 0-.5-.2-.6l-.9-.4c-.2-.1-.4 0-.6.2l-.2.3c-.1.1-.3.2-.5.1-.4-.1-1.3-.5-1.9-1.4-.2-.2-.1-.4 0-.5l.2-.2c.1-.2.2-.4.1-.6l-.4-1c-.1-.2-.3-.3-.6-.2-.2.1-.8.5-1 .9Z"
+      />
+    </svg>
+  );
+}
+
+function SnapchatIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 4.5c1.5-1 4.5-1 6 0 1 .7 1.5 1.8 1.5 3.2 0 1.9-.5 4.3.8 5.5.6.5 1.4.6 1.4.9 0 .5-1.3 1.1-2 1.1-.6 0-.7.8-1.3 1.3-.5.4-1.5.5-2.2.3-.3-.1-.5.2-.4.5l.1.4a4.3 4.3 0 0 1-3.8 0l.1-.4c.1-.3 0-.6-.4-.5-.7.2-1.7.1-2.2-.3-.6-.5-.7-1.3-1.3-1.3-.7 0-2-.6-2-1.1 0-.3.8-.4 1.4-.9 1.3-1.2.8-3.6.8-5.5 0-1.4.5-2.5 1.5-3.2Z"
+      />
+    </svg>
+  );
+}
+
+function XIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M3 4h4l4.5 6 4.7-6H21l-6.5 8.2L21 20h-4l-4.9-6.4L6.7 20H3l6.6-8.2Z" />
     </svg>
   );
 }
