@@ -166,11 +166,11 @@ export default function SearchPage() {
           </Link>
         </div>
         <Link
-          href="/messages"
+          href="/notifications"
           className="flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-200"
-          aria-label="Messages"
+          aria-label="Notifications"
         >
-          <MessageIcon className="h-7 w-7" />
+          <BellIcon className="h-7 w-7" />
         </Link>
         <Link
           href="/profile"
@@ -309,15 +309,15 @@ function ExploreIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function MessageIcon(props: SVGProps<SVGSVGElement>) {
+function BellIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} {...props}>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M5 7.5c0-.97.78-1.75 1.75-1.75h10.5c.97 0 1.75.78 1.75 1.75v7c0 .97-.78 1.75-1.75 1.75H9.8a2 2 0 0 0-1.28.47L6 18.75V7.5Z"
+        d="M18 13.5V11a6 6 0 1 0-12 0v2.5l-1.5 2V16H19.5v-.5l-1.5-2Z"
       />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 10h6M9 13h3" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10 19a2 2 0 0 0 4 0" />
     </svg>
   );
 }
