@@ -309,10 +309,14 @@ export default function HomePage() {
             InnFomo
           </h1>
           <div className="flex items-center gap-4 w-auto justify-end">
-            <button className="relative text-slate-600 transition-colors hover:text-primary dark:text-slate-300">
+            <Link
+              href="/notifications"
+              className="relative text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
+              aria-label="Notifications"
+            >
               <BellIcon className="h-6 w-6" />
               <span className="absolute top-0 right-0.5 block h-2.5 w-2.5 rounded-full border-2 border-background-light bg-red-500 dark:border-background-dark" />
-            </button>
+            </Link>
             <div
               className="h-9 w-9 cursor-pointer rounded-full bg-cover bg-center bg-slate-200 ring-2 ring-transparent transition-all hover:ring-primary dark:bg-slate-700"
               style={{
