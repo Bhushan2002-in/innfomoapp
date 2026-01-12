@@ -576,6 +576,8 @@ function PostCard({
       {showGift && (
         <GiftModal
           amount={giftAmount}
+          recipientName={name}
+          recipientAvatar={avatar || current.url}
           onClose={() => setShowGift(false)}
           onSelect={(value) => setGiftAmount(value)}
         />
@@ -692,10 +694,14 @@ function GiftModal({
   amount,
   onSelect,
   onClose,
+  recipientName,
+  recipientAvatar,
 }: {
   amount: number;
   onSelect: (value: number) => void;
   onClose: () => void;
+  recipientName: string;
+  recipientAvatar?: string;
 }) {
   const selected = giftOptions.find((option) => option.amount === amount) ?? giftOptions[0];
 
@@ -704,9 +710,16 @@ function GiftModal({
       <div className="absolute inset-0" onClick={onClose} aria-label="Close gift modal" role="button" tabIndex={-1} />
       <div className="relative w-full max-w-md rounded-2xl bg-background-light p-5 shadow-2xl ring-1 ring-black/5 dark:bg-background-dark dark:ring-white/5 sm:p-6">
         <div className="mb-4 flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Send a Gift</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Choose an amount to support this creator.</p>
+          <div className="flex items-center gap-3">
+            <div
+              className="h-12 w-12 rounded-full bg-cover bg-center"
+              style={{ backgroundImage: `url('${recipientAvatar ?? ""}')` }}
+              aria-label={`${recipientName} avatar`}
+            />
+            <div className="flex flex-col">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Send a Gift</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">To {recipientName}</p>
+            </div>
           </div>
           <button
             type="button"
