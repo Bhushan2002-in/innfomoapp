@@ -382,11 +382,11 @@ export default function HomePage() {
           </Link>
         </div>
         <Link
-          href="/notifications"
+          href="/messages"
           className="flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-200"
-          aria-label="Notifications"
+          aria-label="Messages"
         >
-          <BellIcon className="h-7 w-7" />
+          <MessageIcon className="h-7 w-7" />
         </Link>
         <Link
           href="/profile"
@@ -660,6 +660,19 @@ function ExploreIcon(props: SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} {...props}>
       <path strokeLinecap="round" strokeLinejoin="round" d="m10 14 1-4 4-1-1 4-4 1Z" />
       <circle cx="12" cy="12" r="9" />
+    </svg>
+  );
+}
+
+function MessageIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 7.5c0-.97.78-1.75 1.75-1.75h10.5c.97 0 1.75.78 1.75 1.75v7c0 .97-.78 1.75-1.75 1.75H9.8a2 2 0 0 0-1.28.47L6 18.75V7.5Z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 10h6M9 13h3" />
     </svg>
   );
 }
