@@ -16,7 +16,7 @@ export default function BrandProfilePage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Proceed to next brand onboarding step.
+    router.push("/home");
   };
 
   return (

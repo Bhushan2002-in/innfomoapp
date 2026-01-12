@@ -24,6 +24,11 @@ export default function CreatorProfilePage() {
     setBio(event.target.value.slice(0, 150));
   };
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    router.push("/home");
+  };
+
   return (
     <main className="bg-background-light text-gray-900 dark:bg-background-dark dark:text-white">
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col overflow-y-auto px-5 pb-8 pt-6">
@@ -57,7 +62,7 @@ export default function CreatorProfilePage() {
           </div>
         </div>
 
-        <form className="flex flex-1 flex-col gap-6">
+        <form className="flex flex-1 flex-col gap-6" onSubmit={handleSubmit}>
           <div className="mb-2 flex justify-center">
             <div className="group relative cursor-pointer">
               <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gray-300 bg-surface-light transition-colors dark:border-border-dark dark:bg-[#2a2435]">
@@ -181,7 +186,7 @@ export default function CreatorProfilePage() {
 
           <div className="mt-4 pb-4">
             <button
-              type="button"
+              type="submit"
               className="group relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-primary py-4 text-lg font-bold text-white shadow-[0_4px_14px_0_rgba(108,43,238,0.39)] transition-transform active:scale-[0.98] hover:bg-primary/90"
             >
               <span

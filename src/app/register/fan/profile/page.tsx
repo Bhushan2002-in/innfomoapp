@@ -8,7 +8,7 @@ export default function FanProfilePage() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Finalize fan profile creation here.
+    router.push("/home");
   };
 
   return (
@@ -61,7 +61,7 @@ export default function FanProfilePage() {
             <p className="mt-3 text-sm font-semibold text-primary">Upload Profile Picture</p>
           </div>
 
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+          <form className="flex flex-col gap-5" id="fan-profile-form" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Display Name
@@ -131,7 +131,7 @@ export default function FanProfilePage() {
         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-light via-background-light to-transparent p-6 pb-8 pt-12 dark:from-background-dark dark:via-background-dark">
           <button
             type="submit"
-            form="terms"
+            form="fan-profile-form"
             className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-primary py-4 text-lg font-bold text-white shadow-[0_0_25px_rgba(108,43,238,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(108,43,238,0.6)] active:scale-[0.98]"
           >
             <span className="relative z-10">Create Account</span>

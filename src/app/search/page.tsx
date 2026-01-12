@@ -141,7 +141,7 @@ export default function SearchPage() {
         </div>
       </main>
 
-      <nav className="fixed bottom-0 z-40 flex w-full items-center justify-between border-t border-slate-200 bg-background-light pb-6 pt-3 px-6 dark:border-white/5 dark:bg-background-dark">
+      <nav className="fixed bottom-0 z-40 flex w-full items-center justify-between border-t border-slate-200 bg-background-light pb-6 pt-3 px-6 dark:border-white/5 dark:bg-background-dark lg:hidden">
         <Link
           href="/home"
           className="flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-200"
@@ -157,16 +157,28 @@ export default function SearchPage() {
           <ExploreIcon className="h-7 w-7" />
         </Link>
         <div className="-mt-6 flex flex-col items-center justify-center">
-          <button className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/40 transition-transform hover:scale-105">
+          <Link
+            href="/create"
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/40 transition-transform hover:scale-105"
+            aria-label="Create"
+          >
             <AddIcon className="h-8 w-8" />
-          </button>
+          </Link>
         </div>
-        <button className="flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-200">
-          <MovieIcon className="h-7 w-7" />
-        </button>
-        <button className="flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-200">
+        <Link
+          href="/messages"
+          className="flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-200"
+          aria-label="Messages"
+        >
+          <MessageIcon className="h-7 w-7" />
+        </Link>
+        <Link
+          href="/profile"
+          className="flex flex-col items-center gap-1 text-slate-400 transition-colors hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-200"
+          aria-label="Profile"
+        >
           <PersonIcon className="h-7 w-7" />
-        </button>
+        </Link>
       </nav>
     </main>
   );
@@ -297,11 +309,15 @@ function ExploreIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function MovieIcon(props: SVGProps<SVGSVGElement>) {
+function MessageIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} {...props}>
-      <rect x="4" y="5" width="16" height="14" rx="2" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 9h16M9 5v4M15 5v4" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 7.5c0-.97.78-1.75 1.75-1.75h10.5c.97 0 1.75.78 1.75 1.75v7c0 .97-.78 1.75-1.75 1.75H9.8a2 2 0 0 0-1.28.47L6 18.75V7.5Z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 10h6M9 13h3" />
     </svg>
   );
 }

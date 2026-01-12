@@ -37,3 +37,19 @@ body {
   background: var(--color-background-dark);
   color: #e2e8f0;
 }
+
+@keyframes story-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.story-progress-fill {
+  transform-origin: left;
+  animation-name: story-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
