@@ -31,8 +31,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and export
-        run: npm run build
+      - name: Build and export (force webpack, add .nojekyll)
+        run: |
+          TURBOPACK=0 npm run build
+          touch out/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
