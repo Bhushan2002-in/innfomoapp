@@ -58,8 +58,8 @@ const posts: Post[] = [
     tags: "#travel #singapore #innfomo",
     medias: [
       {
-        url: "https://lh3.googleusercontent.com/aida-public/AB6AXuB_zhy-diVn077BHW_UZiN05qHQWbZQNegucAhjnIC9dVtnU7IiFkyF2Y6WVI47sIWaTPpaxMV0tNIIShf2yEzTOaG7C2MGVG7BPwwqvJuYKfwdVsWTCJ3RgqVpGFHgRydJ8LZAilWdbyt5MewStOcFPBpLdeKg8LXgRUAPj9pv-R6ZTTvnPfNCwVG22u2a-AaBGl9jehjELbDXVCfxOJMIcLN0ioQ3zQ8i6XcTE3Ypd9AGyyhsFchWCcVziUbmbAJTJ-h7Kk4FRPH",
-        alt: "Marina Bay lights at night",
+        url: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+        alt: "Marina Bay skyline at night",
       },
       {
         url: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
@@ -299,6 +299,13 @@ const posts: Post[] = [
   },
 ];
 
+const giftOptions = [
+  { amount: 5, perks: ["Send a wish"] },
+  { amount: 50, perks: ["Send a wish", "Highlight comment"] },
+  { amount: 500, perks: ["Priority shoutout", "Highlight comment", "Send a wish"] },
+  { amount: 5000, perks: ["VIP thank-you video", "Priority shoutout", "Highlight comment", "Send a wish"] },
+];
+
 export default function HomePage() {
   return (
     <main className="bg-background-light text-slate-900 dark:bg-background-dark dark:text-white min-h-screen pb-20">
@@ -448,6 +455,8 @@ function PostCard({
   const items = medias ?? [{ url: media ?? "", alt: name }];
   const current = items[active];
   const showControls = items.length > 1;
+  const [showGift, setShowGift] = useState(false);
+  const [giftAmount, setGiftAmount] = useState(giftOptions[0].amount);
 
   const actionClasses =
     actionVariant === "outline"
@@ -455,7 +464,8 @@ function PostCard({
       : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20";
 
   return (
-    <article className="group flex flex-col overflow-hidden border-y border-slate-100 bg-white shadow-sm dark:border-white/5 dark:bg-surface-dark sm:mx-4 sm:rounded-3xl sm:border">
+    <>
+      <article className="group flex flex-col overflow-hidden border-y border-slate-100 bg-white shadow-sm dark:border-white/5 dark:bg-surface-dark sm:mx-4 sm:rounded-3xl sm:border">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <div
@@ -542,7 +552,11 @@ function PostCard({
             <SendIcon className="h-6 w-6 -rotate-12" />
           </button>
         </div>
-        <button className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-all active:scale-95 hover:bg-primary/90">
+        <button
+          className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-all active:scale-95 hover:bg-primary/90"
+          onClick={() => setShowGift(true)}
+          type="button"
+        >
           <GiftIcon className="h-5 w-5" />
           Gift
         </button>
@@ -558,7 +572,15 @@ function PostCard({
           View all {comments} comments
         </button>
       </div>
-    </article>
+      </article>
+      {showGift && (
+        <GiftModal
+          amount={giftAmount}
+          onClose={() => setShowGift(false)}
+          onSelect={(value) => setGiftAmount(value)}
+        />
+      )}
+    </>
   );
 }
 
@@ -662,6 +684,89 @@ function GiftIcon(props: SVGProps<SVGSVGElement>) {
         strokeLinejoin="round"
         d="M12 8c-1.5 0-3.5-.8-3.5-2.5S10 3 12 5.5C14 3 15.5 3 15.5 5.5 15.5 7.2 13.5 8 12 8Z"
       />
+    </svg>
+  );
+}
+
+function GiftModal({
+  amount,
+  onSelect,
+  onClose,
+}: {
+  amount: number;
+  onSelect: (value: number) => void;
+  onClose: () => void;
+}) {
+  const selected = giftOptions.find((option) => option.amount === amount) ?? giftOptions[0];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 px-4 pb-6 sm:items-center sm:pb-0">
+      <div className="absolute inset-0" onClick={onClose} aria-label="Close gift modal" role="button" tabIndex={-1} />
+      <div className="relative w-full max-w-md rounded-2xl bg-background-light p-5 shadow-2xl ring-1 ring-black/5 dark:bg-background-dark dark:ring-white/5 sm:p-6">
+        <div className="mb-4 flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Send a Gift</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Choose an amount to support this creator.</p>
+          </div>
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-4 gap-3">
+          {giftOptions.map((option) => (
+            <button
+              key={option.amount}
+              type="button"
+              onClick={() => onSelect(option.amount)}
+              className={`flex h-12 items-center justify-center rounded-xl border text-sm font-bold transition ${
+                option.amount === amount
+                  ? "border-primary bg-primary text-white shadow-[0_10px_25px_rgba(108,43,238,0.25)]"
+                  : "border-slate-200 bg-white text-slate-900 hover:border-primary/60 dark:border-slate-700 dark:bg-surface-dark dark:text-white"
+              }`}
+            >
+              ₹{option.amount}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-surface-dark">
+          <p className="mb-2 font-semibold text-slate-900 dark:text-white">What’s included:</p>
+          <ul className="space-y-1 text-slate-600 dark:text-slate-300">
+            {selected.perks.map((perk) => (
+              <li key={perk} className="flex items-center gap-2">
+                <CheckIcon className="h-4 w-4 text-primary" />
+                <span>{perk}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <button className="mt-5 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary/90 active:scale-[0.98]">
+          Send ₹{amount}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CloseIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 6 18 18M6 18 18 6" />
+    </svg>
+  );
+}
+
+function CheckIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4 9-10" />
     </svg>
   );
 }
