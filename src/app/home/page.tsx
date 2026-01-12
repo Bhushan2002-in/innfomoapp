@@ -597,19 +597,6 @@ function ExploreIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function BellIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true" {...props}>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M18 13.5V11a6 6 0 1 0-12 0v2.5l-1.5 2V16H19.5v-.5l-1.5-2Z"
-      />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M10 19a2 2 0 0 0 4 0" />
-    </svg>
-  );
-}
-
 function PersonIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} {...props}>
